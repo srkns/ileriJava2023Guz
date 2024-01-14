@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kullanıcı Verileri - İleri Java Uygulamaları</title>
+    <link rel="stylesheet" href="assets/styles.css">
+    <script>
+        function kisileriListele() {
+            var request = new XMLHttpRequest();
+            request.open("GET", "http://localhost:8080/tumKullanicilariListele", true);
+            request.onreadystatechange = function () {
+                if (request.readyState === XMLHttpRequest.DONE && request.status === 200) {
+                    var kisiler = JSON.parse(request.responseText);
+                    var tabloBaslik = "<table style=\"width:100%\"><tr><th>ID</th><th>Kullanıcı Adı</th><th>Şifre</th><th>Eposta</th></tr>";
+                    var tabloVeri = "";
+                    for (var i = 0; i < kisiler.length; i++) {
+                        tabloVeri += "<tr>" +
+                            "<td>" + kisiler[i].id + "</td>" +
+                            "<td>" + kisiler[i].username + "</td>" +
+                            "<td>" + kisiler[i].password + "</td>" +
+                            "<td>" + kisiler[i].email + "</td>" +
+                        "</tr>";
+                    }
+                    var tabloBitis = "</table>";
+                    document.getElementById("kullaniciListesi").innerHTML = tabloBaslik + tabloVeri + tabloBitis;
+                }
+            };
+            request.send();
+        }
+        function kisiEkle() {
+            const parametreler = {
+                username: document.getElementById("username").value,
+                password: document.getElementById("password").value,
+                email: document.getElementById("email").value
+            }
+            var request = new XMLHttpRequest();
+            request.open("POST", "http://localhost:8080/kullaniciOlustur", true);
+            request.setRequestHeader("Content-type", "application/json");
+            request.onreadystatechange = function () {
+                if (request.readyState === XMLHttpRequest.DONE && request.status === 200) {
+                    alert(request.responseText);
+                    kisileriListele();
+                }
+            };
+            request.send(JSON.stringify(parametreler));
+        }
+        function kisiSil() {
+            var request = new XMLHttpRequest();
+            request.open("DELETE", "http://localhost:8080/kullaniciSil?id=" + document.getElementById("ID").value, true);
+            request.onreadystatechange = function () {
+                if (request.readyState === XMLHttpRequest.DONE && request.status === 200) {
+                    alert(request.responseText);
+                    kisileriListele();
+                }
+            };
+            request.send();
+        }
+        function kisiGuncelle() {
+            const parametreler = {
+                username: document.getElementById("guncelleusername").value,
+                password: document.getElementById("guncellepassword").value,
+                email: document.getElementById("guncelleemail").value
+            }
+            var request = new XMLHttpRequest();
+            request.open("PUT", "http://localhost:8080/kullaniciGuncelle/" + document.getElementById("guncelleID").value, true);
+            request.setRequestHeader("Content-type", "application/json");
+            request.onreadystatechange = function () {
+                if (request.readyState === XMLHttpRequest.DONE && request.status === 200) {
+                    alert(request.responseText);
+                    kisileriListele();
+                }
+            };
+            request.send(JSON.stringify(parametreler));
+        }
+    </script>
+</head>
+<body>
+İleri Java Uygulamaları - Önyüz Çalışmaları
+
+<p>...KULLANICI LİSTESİ...</p>
+
+<button type="button" onclick="kisileriListele()">Kişileri Listele</button>
+
+<div id="kullaniciListesi">
+
+</div>
+<br>
+<div id="kullaniciEkle">
+    <label for="username">Kullanıcı Adı:</label>
+    <input type="text" id="username" name="username">
+    <label for="password">Şifre:</label>
+    <input type="password" id="password" name="password">
+    <label for="email">Eposta Adresi:</label>
+    <input type="text" id="email" name="email">
+    <button type="button" onclick="kisiEkle()">Kullanıcı Ekle</button>
+</div>
+<br>
+<div id="kullaniciSil">
+    <label for="ID">Kullanıcı ID:</label>
+    <input type="text" id="ID" name="ID">
+    <button type="button" onclick="kisiSil()">Kişi Sil</button>
+</div>
+<br>
+<div id="kullaniciGuncelle">
+    <label for="guncelleID">ID:</label>
+    <input type="text" id="guncelleID" name="guncelleID">
+    <label for="guncelleusername">Kullanıcı Adı:</label>
+    <input type="text" id="guncelleusername" name="guncelleusername">
+    <label for="guncellepassword">Şifre:</label>
+    <input type="password" id="guncellepassword" name="guncellepassword">
+    <label for="guncelleemail">Eposta Adresi:</label>
+    <input type="text" id="guncelleemail" name="guncelleemail">
+    <button type="button" onclick="kisiGuncelle()">Kullanıcı Güncelle</button>
+</div>
+</body>
+</html>
